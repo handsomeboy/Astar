@@ -1,155 +1,155 @@
-% ÎÒµÄA*Ëã·¨
+% æˆ‘çš„A*ç®—æ³•
 % jack0077555@163.com
-% ¸öÈËÍøÕ¾£ºwww.deanhan.com
-% ¸öÈË¹«ÖÚºÅ£ºÉî¶È»úÆ÷Ñ§Ï°
-% ²Î¿¼£º https://en.wikipedia.org/wiki/A*_search_algorithm
+% ä¸ªäººç½‘ç«™ï¼šwww.deanhan.com
+% ä¸ªäººå…¬ä¼—å·ï¼šæ·±åº¦æœºå™¨å­¦ä¹ 
+% å‚è€ƒï¼š https://en.wikipedia.org/wiki/A*_search_algorithm
 
 clear all
 clc
-%% ÈË¹¤  ÉèÖÃµØÍ¼ºÍÕÏ°­
+%% äººå·¥  è®¾ç½®åœ°å›¾å’Œéšœç¢
 rows = 21;
-cols = 28;      %ĞĞÊıºÍÁĞÊı
+cols = 28;      %è¡Œæ•°å’Œåˆ—æ•°
 
-map=ones(rows,cols);%ĞĞÊıºÍÁĞÊı
+map=ones(rows,cols);%è¡Œæ•°å’Œåˆ—æ•°
 
 map(4,4:8)=0;
 map(8,4:8)=0;
 map(4:8,8)=0;
 map(12,1:end-1)=0;
-map(2:end-1,19)=0;%Ç½
+map(2:end-1,19)=0;%å¢™
 
 start=[6,6];
-goal=[17,13];%ÉèÖÃÆğµãºÍÖÕµã
+goal=[17,13];%è®¾ç½®èµ·ç‚¹å’Œç»ˆç‚¹
 
 %%
 startIndex=sub2ind([rows,cols],start(1),start(2));
 goalIndex=sub2ind([rows,cols],goal(1),goal(2));
 
-stepLen1=10;%Ë®Æ½»ò´¹Ö±µÄcost
-stepLen2=14;%Ğ±ÏòµÄcost
+stepLen1=10;%æ°´å¹³æˆ–å‚ç›´çš„cost
+stepLen2=14;%æ–œå‘çš„cost
 
-%% Ïà¹ØµÄ¾ØÕó
+%% ç›¸å…³çš„çŸ©é˜µ
 
-closeMat = false(rows,cols);%±Õmat
-openMat  = false(rows,cols);%¿ªmat
+closeMat = false(rows,cols);%é—­mat
+openMat  = false(rows,cols);%å¼€mat
 
 
 gScore = inf(rows,cols);
-fScore = inf(rows,cols);%³õÊ¼»¯È«²¿Îªinf
+fScore = inf(rows,cols);%åˆå§‹åŒ–å…¨éƒ¨ä¸ºinf
 
-cameFrom =zeros(rows,cols);%½ÚµãµÄ¸¸½Úµã£¬ÏßĞÔ×ø±ê
+cameFrom =zeros(rows,cols);%èŠ‚ç‚¹çš„çˆ¶èŠ‚ç‚¹ï¼Œçº¿æ€§åæ ‡
 
-%% ÉèÖÃÆô·¢Ê½¾àÀë¾ØÕó
+%% è®¾ç½®å¯å‘å¼è·ç¦»çŸ©é˜µ
 
 
 [Y,X]=meshgrid(1:cols,1:rows);
 
-hScore=stepLen1 * max(abs(X-goal(1)),  abs(Y-goal(1))); %ÕâÀïÓÃµ½µÄÊÇL-inf·¶Êı
+hScore=stepLen1 * max(abs(X-goal(1)),  abs(Y-goal(1))); %è¿™é‡Œç”¨åˆ°çš„æ˜¯L-infèŒƒæ•°
 
-%% ÉèÖÃÆğµã
+%% è®¾ç½®èµ·ç‚¹
 
-openMat(startIndex)=true;%¿ªÊ¼µÄÊ±ºòÖ»ÓĞÆğµãÔÚopenÀïÃæ
+openMat(startIndex)=true;%å¼€å§‹çš„æ—¶å€™åªæœ‰èµ·ç‚¹åœ¨opené‡Œé¢
 
-gScore(startIndex)=0;                  % ÆğµãµÄgÖµ
-fScore(startIndex)=hScore(startIndex); % ÆğµãµÄfÖµ
+gScore(startIndex)=0;                  % èµ·ç‚¹çš„gå€¼
+fScore(startIndex)=hScore(startIndex); % èµ·ç‚¹çš„få€¼
 
 
-while any(openMat(:))   %Ö»ÒªopenMat²»Îª¿Õ
+while any(openMat(:))   %åªè¦openMatä¸ä¸ºç©º
     
     
     
-    [~,currIdx]=min(fScore(:));%ÕÒµ½fÖµ×îĞ¡µÄµã
+    [~,currIdx]=min(fScore(:));%æ‰¾åˆ°få€¼æœ€å°çš„ç‚¹
     
     
-    if goalIndex==currIdx %ÕÒµ½È«¾Ö
-        path = findPath(cameFrom, currIdx, fScore) ;%ÕÒµ½Â·¾¶
+    if goalIndex==currIdx %æ‰¾åˆ°å…¨å±€
+        path = findPath(cameFrom, currIdx, fScore) ;%æ‰¾åˆ°è·¯å¾„
         break;
     end
     
-    [currRow,currCol]=ind2sub([rows,cols],currIdx);%µ±Ç°µÄ×ø±ê×ª»¯Îª2Î¬Ë÷Òı
+    [currRow,currCol]=ind2sub([rows,cols],currIdx);%å½“å‰çš„åæ ‡è½¬åŒ–ä¸º2ç»´ç´¢å¼•
     
     
     openMat(currIdx)  = false;
-    closeMat(currIdx) = true;%´ÓopenÖĞÈ¡³ö£¬·ÅÈëcloseÖĞ
+    closeMat(currIdx) = true;%ä»openä¸­å–å‡ºï¼Œæ”¾å…¥closeä¸­
     
-    fScore(currIdx)  = inf; %fÖµÒª±äÎªÎŞÇî£¬ÔÚ½øĞĞfÖµ±È½ÏÊ±£¬²»¿¼ÂÇ
+    fScore(currIdx)  = inf; %få€¼è¦å˜ä¸ºæ— ç©·ï¼Œåœ¨è¿›è¡Œfå€¼æ¯”è¾ƒæ—¶ï¼Œä¸è€ƒè™‘
     
     
     
-    for i=currRow-1:currRow+1    %¿¼ÂÇcurrentµãµÄÖÜÎ§
+    for i=currRow-1:currRow+1    %è€ƒè™‘currentç‚¹çš„å‘¨å›´
         
-        if (i<1 || i>rows)  %·Ç·¨index
+        if (i<1 || i>rows)  %éæ³•index
             continue;
         end
         
-        for j=currCol-1:currCol+1  %ĞĞºÍÁĞ
-            if   (j<1 || j>cols)  %·Ç·¨index
+        for j=currCol-1:currCol+1  %è¡Œå’Œåˆ—
+            if   (j<1 || j>cols)  %éæ³•index
                 continue;
             end
             
-            if ~map(i,j) %Ç½
+            if ~map(i,j) %å¢™
                 continue;
             end
             
-            if (i==currRow) && (j==currCol)  %ÅÅ³ı×ÔÉí
+            if (i==currRow) && (j==currCol)  %æ’é™¤è‡ªèº«
                 continue;
             end
             
             
-            % ¿ªÊ¼ÅĞ¶Ï
+            % å¼€å§‹åˆ¤æ–­
             
-            if closeMat(i,j)  %²»ÔÚcloseÀïÃæ
+            if closeMat(i,j)  %ä¸åœ¨closeé‡Œé¢
                 continue;
             end
             
-            direct = abs(i-currRow) + abs(j-currCol);%ÓÃÓÚÔÚxºÍy·½Ïò·Ö±ğ×ßÁË¶àÉÙ
+            direct = abs(i-currRow) + abs(j-currCol);%ç”¨äºåœ¨xå’Œyæ–¹å‘åˆ†åˆ«èµ°äº†å¤šå°‘
             
             if direct<=1
-                temp=gScore(currRow,currCol) + stepLen1; %²»Í¬·½Ïò³É±¾²»Ò»Ñù
+                temp=gScore(currRow,currCol) + stepLen1; %ä¸åŒæ–¹å‘æˆæœ¬ä¸ä¸€æ ·
             else
                 temp=gScore(currRow,currCol) + stepLen2;
             end
             
-            if ~openMat(i,j) %²»ÔÚopenÀïÃæ
+            if ~openMat(i,j) %ä¸åœ¨opené‡Œé¢
                 openMat(i,j)=true;
             else
-                if  temp >= gScore(i,j) %ÔÚopenÀïÃæ£¬µ«ÊÇÖµ±È½Ï´ó
+                if  temp >= gScore(i,j) %åœ¨opené‡Œé¢ï¼Œä½†æ˜¯å€¼æ¯”è¾ƒå¤§
                     continue;
                 end
             end
             
             
-            cameFrom(i,j)=currIdx; %£¨i,j£©À´Ô´ÓÚcurrIdx
+            cameFrom(i,j)=currIdx; %ï¼ˆi,jï¼‰æ¥æºäºcurrIdx
             
             gScore(i,j) = temp;
-            fScore(i,j) = gScore(i,j)+ hScore(i,j);  %ÉèÖÃĞÂµÄgºÍfÖµ
+            fScore(i,j) = gScore(i,j)+ hScore(i,j);  %è®¾ç½®æ–°çš„gå’Œfå€¼
             
         end
     end
     
 end
 
-%% »æÖÆÍ¼ĞÎ
+%% ç»˜åˆ¶å›¾å½¢
 
 cmap = [0,0,0;...
     1,1,1;...
     1,0,0;... %r
     0,0,1;... %g
     1,1,0;... %b
-    ];%ÑÕÉ«¿¨£¬Ã¿Ò»ĞĞ¶ÔÓ¦Ò»¸öÑÕÉ«
+    ];%é¢œè‰²å¡ï¼Œæ¯ä¸€è¡Œå¯¹åº”ä¸€ä¸ªé¢œè‰²
 
 
-colormap(cmap);%ÉèÖÃÑÕÉ«¿¨
+colormap(cmap);%è®¾ç½®é¢œè‰²å¡
 
 
-map=map+1;%ÑÕÉ«±àºÅ´Ó0¿ªÊ¼
+map=map+1;%é¢œè‰²ç¼–å·ä»0å¼€å§‹
 
 map(goalIndex)=3;
 map(startIndex)=4;
-map(path(2:end-1))=5;%¿´É«¿¨±àºÅ
+map(path(2:end-1))=5;%çœ‹è‰²å¡ç¼–å·
 
 
-h=image(0.5,0.5,map);%map(1,1)ÏñËØÖµÂäÔÚ×ø±êµÄµÄÄÄ¸öÎ»ÖÃ
+h=image(0.5,0.5,map);%map(1,1)åƒç´ å€¼è½åœ¨åæ ‡çš„çš„å“ªä¸ªä½ç½®
 
 
 
@@ -158,3 +158,7 @@ set(gca,'ytick',[0:rows+1])
 axis equal
 grid on
 axis tight
+
+
+set(gca, 'position', [0.05 0.05 0.93 0.93 ]); % the axis must be normalized
+print('-f1', '-r1000', '-dpng','xxx.png'); % set the DPI
